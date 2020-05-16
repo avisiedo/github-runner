@@ -21,9 +21,9 @@ WORKDIR /opt
 RUN git clone --recursive -b master --depth 1 https://github.com/hadolint/hadolint.git hadolint
 
 WORKDIR /opt/hadolint
-RUN stack --no-terminal --install-ghc test --only-dependencies \
-    && scripts/fetch_version.sh \
-    && stack install --ghc-options="-fPIC" --flag hadolint:static
+RUN stack --no-terminal --install-ghc test --only-dependencies
+RUN scripts/fetch_version.sh
+RUN stack install --ghc-options="-fPIC" --flag hadolint:static
 
 # COMPRESS WITH UPX
 RUN curl -sSL https://github.com/upx/upx/releases/download/v3.94/upx-3.94-amd64_linux.tar.xz \
@@ -43,10 +43,8 @@ ARG LABELS=container,amd64,fedora31
 # Copy hadolint from builder container
 COPY --from=builder /root/.local/bin/hadolint /usr/bin/
 
-# Install linters: pylint, shellcheck, rpmlint
-RUN dnf install -y Shellcheck pythin-pip rpmlint \
-    && pip install -U pip \
-    && pip install pylint \
+# Install linters: shellcheck
+RUN dnf install -y ShellCheck \
     && dnf clean all
 
 # Install and register github-runner
@@ -57,7 +55,7 @@ RUN curl -O -L https://github.com/actions/runner/releases/download/v2.262.1/acti
     && ./bin/installdependencies.sh \
     && RUNNER_ALLOW_RUNASROOT=1 ./config.sh --unattended --url "$URL" --token "$TOKEN" --labels "$LABELS"
 
-CMD ./run.sh
+CMD ["./run.sh"]
 
 # Build with
 # podman build --build-arg URL=https://github.com/myuser/myproject --build-arg TOKEN=my_token -t github-runner:fedora31

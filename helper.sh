@@ -54,6 +54,7 @@ Usage: ./helper <subcommand> ...
     help
     build  --url https://github.com/username/projectname.git  --token \$TOKEN  [--label mylabel1{,mylabel2}]
     lint   Check linters for the list of files specified.
+    run    Run github-runner
 
 Review your "https://github.com/username/projectname/settings/actions" site to get your token.
 EOB
@@ -103,7 +104,29 @@ function cmd-build
 
 function cmd-lint
 {
-    return 0
+    for item in "$@"
+    do
+        case "$( basename "$item" )" in
+            Dockerfile )
+                podman run -it --rm -v "$PWD:$PWD:z" -w "$PWD" --entrypoint "" docker.io/hadolint/hadolint hadolint "$item"
+                ;;
+            *.sh )
+                podman run -it --rm -v "$PWD:$PWD:z" -w "$PWD" --entrypoint "" docker.io/nlknguyen/alpine-shellcheck shellcheck "$item"
+                ;;
+            *.md )
+                podman run --rm -it -v "$PWD:$PWD:z" -w "$PWD" markdownlint/markdownlint "$item"
+                ;;
+            * )
+                warning_message "No linter for '$item' file"
+                ;;
+        esac
+    done
+}
+
+
+function cmd-run
+{
+    try podman run --rm -it -e RUNNER_ALLOW_RUNASROOT=1 github-runner:latest "$@"
 }
 
 
@@ -111,7 +134,7 @@ CMD="$1"
 shift 1
 
 case "$CMD" in
-    "help" | "build" )
+    "help" | "build" | "lint" | "run" )
         "cmd-$CMD" "$@"
         ;;
     * )

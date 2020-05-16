@@ -18,6 +18,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v1
-      - name: Hadolint
+      - name: hadolint
         run: |-
           hadolint Dockerfile
+      - name: shellcheck
+        run: |-
+          shellcheck helper.sh

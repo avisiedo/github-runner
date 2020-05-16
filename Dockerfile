@@ -36,15 +36,11 @@ RUN curl -sSL https://github.com/upx/upx/releases/download/v3.94/upx-3.94-amd64_
 #
 FROM fedora:31
 
-ARG URL
-ARG TOKEN
-ARG LABELS=container,amd64,fedora31
-
 # Copy hadolint from builder container
 COPY --from=builder /root/.local/bin/hadolint /usr/bin/
 
 # Install linters: shellcheck
-RUN dnf install -y ShellCheck \
+RUN dnf install -y ShellCheck git \
     && dnf clean all
 
 # Install and register github-runner
@@ -52,8 +48,14 @@ WORKDIR /actions-runner
 RUN curl -O -L https://github.com/actions/runner/releases/download/v2.262.1/actions-runner-linux-x64-2.262.1.tar.gz \
     && tar xzf actions-runner-linux-x64-2.262.1.tar.gz \
     && rm -vf actions-runner-linux-x64-2.262.1.tar.gz \
-    && ./bin/installdependencies.sh \
-    && RUNNER_ALLOW_RUNASROOT=1 ./config.sh --unattended --url "$URL" --token "$TOKEN" --labels "$LABELS"
+    && ./bin/installdependencies.sh
+
+ARG URL
+ARG TOKEN
+ARG LABELS=container,amd64,fedora31
+ARG RUNNER_ALLOW_RUNASROOT=1
+
+RUN ./config.sh --unattended --url "$URL" --token "$TOKEN" --labels "$LABELS"
 
 CMD ["./run.sh"]
 

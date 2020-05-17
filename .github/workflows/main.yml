@@ -8,6 +8,7 @@ name: lint
 #     branches: [ master ]
 #   pull_request:
 #     branches: [ master ]
+# yamllint disable-line rule:truthy
 on: [push, pull_request]
 
 # A workflow run is made up of one or more jobs that can run sequentially or
@@ -36,4 +37,3 @@ jobs:
         uses: ./.github/actions/yamllint
         with:
           file: .github/actions/yamllint/action.yml
-        

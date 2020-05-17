@@ -1,7 +1,8 @@
+---
 name: lint
 
-# Controls when the action will run. Triggers the workflow on push or pull request
-# events but only for the master branch
+# Controls when the action will run. Triggers the workflow on push or pull
+# request events but only for the master branch
 # on:
 #   push:
 #     branches: [ master ]
@@ -9,18 +10,25 @@ name: lint
 #     branches: [ master ]
 on: [push, pull_request]
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+# A workflow run is made up of one or more jobs that can run sequentially or
+# in parallel
 jobs:
   # This workflow contains a single job called "build"
   linter:
     # The type of runner that the job will run on
-    runs-on: [self-hosted,container,amd64,fedora31]
+    # runs-on: [self-hosted,container,amd64,fedora31]
 
     steps:
-      - uses: actions/checkout@v1
-      - name: hadolint
-        run: |-
-          hadolint Dockerfile
-      - name: shellcheck
-        run: |-
-          shellcheck helper.sh
+      - name: Lint Dockerfile
+        uses: actions/hadolint
+        with:
+          file: Dockerfile
+      - name: Lint helper.sh
+        uses: actions/shellcheck
+        with:
+          file: helper.sh
+      - name: Lint helper.sh
+        uses: actions/shellcheck
+        with:
+          file: helper.sh
+      

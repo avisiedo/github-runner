@@ -16,7 +16,7 @@ jobs:
   # This workflow contains a single job called "build"
   linter:
     # The type of runner that the job will run on
-    runs-on: [ubuntu]
+    runs-on: ubuntu-latest
 
     steps:
       - name: Lint Dockerfile

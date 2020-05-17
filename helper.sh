@@ -116,6 +116,9 @@ function cmd-lint
             *.md )
                 podman run --rm -it -v "$PWD:$PWD:z" -w "$PWD" markdownlint/markdownlint "$item"
                 ;;
+            *.yml | *.yaml )
+                podman run --rm -it -v "$PWD:$PWD:z" -w "$PWD" cytopia/yamllint "$item"
+                ;;
             * )
                 warning_message "No linter for '$item' file"
                 ;;

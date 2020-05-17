@@ -20,15 +20,19 @@ jobs:
 
     steps:
       - name: Lint Dockerfile
-        uses: actions/hadolint
+        uses: actions/hadolint@latest
         with:
           file: Dockerfile
       - name: Lint helper.sh
-        uses: actions/shellcheck
+        uses: actions/shellcheck@latest
         with:
           file: helper.sh
-      - name: Lint helper.sh
-        uses: actions/shellcheck
+      - name: Lint .github/workflows/main.yml
+        uses: actions/yamllint@latest
         with:
-          file: helper.sh
-      
+          file: .github/workflows/main.yml
+      - name: Lint .github/actions/yamllint/action.yml
+        uses: actions/yamllint@latest
+        with:
+          file: .github/actions/yamllint/action.yml
+        

@@ -16,7 +16,7 @@ jobs:
   # This workflow contains a single job called "build"
   linter:
     # The type of runner that the job will run on
-    runs-on: [self-hosted,container,amd64,fedora31]
+    runs-on: [ubuntu]
 
     steps:
       - name: Lint Dockerfile
